@@ -10,7 +10,7 @@ const { chains, publicClient } = configureChains(
     [
         jsonRpcProvider({
             rpc: () => ({
-            http: "https://mainnet.infura.io/v3/ec28bb5247ec4819af95491ac29ab703", // Infura/Alchemy key kamu
+            http: "https://eth-sepolia.g.alchemy.com/v2/woShlFpCjT9thBCgtalMU", // Infura/Alchemy key kamu
             }),
         }),
     ]
