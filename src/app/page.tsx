@@ -1,7 +1,7 @@
 'use client'
 
-import { WalletBalance } from '@/components/WalletBalance'
-import { WalletInfo } from '@/components/WalletInfo'
+import { WalletBalance } from '@/components/Wallet/WalletBalance'
+import { WalletInfo } from '@/components/Wallet/WalletInfo'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/navigation'
 
