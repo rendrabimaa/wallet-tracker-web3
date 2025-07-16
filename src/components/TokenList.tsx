@@ -12,6 +12,9 @@ export function TokenList() {
     useEffect(() => {
         if(isConnected && address) {
             fetchTokenList(address).then(res => {
+                console.log('ini Token list')
+                console.log(res)
+
                 setTokens(res?.tokenBalances || [])
             })
         }
