@@ -17,37 +17,57 @@
 //         return null
 //     }
 // }
+const apiKey = "woShlFpCjT9thBCgtalMU"
+const baseUrl = `https://eth-sepolia.g.alchemy.com/v2/${apiKey}`
 
 export async function fetchTokenList(address: string) {
-    const apiKey = "woShlFpCjT9thBCgtalMU";
-    // https://eth-mainnet.g.alchemy.com/v2/woShlFpCjT9thBCgtalMU
-    const url = 'https://eth-sepolia.g.alchemy.com/v2/woShlFpCjT9thBCgtalMU';
-    const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
+    try {
+        // Step 1: Fetch token balances
+        const balancesRes = await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+            id: 1,
+            jsonrpc: '2.0',
+            method: 'alchemy_getTokenBalances',
+            params: [address, "erc20"]
+            })
+        })
 
-    const body = JSON.stringify({
-        id: 1,
-        jsonrpc: "2.0",
-        method: "alchemy_getTokenBalances",
-        params: [
-            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-            "erc20"
-        ]
-    });
-    
-    return fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: body
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('testtingg')
-        console.log(data)
-        return data.result
-    })
-    .catch(error => console.error('Error:', error));
-  }
+        const balancesData = await balancesRes.json()
+        const tokens = balancesData?.result?.tokenBalances || []
+
+
+        const tokensWithMetadata = await Promise.all(
+            tokens.map(async (token: any) => {
+                const metaRes = await fetch(baseUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                    id: 1,
+                    jsonrpc: '2.0',
+                    method: 'alchemy_getTokenMetadata',
+                    params: [token.contractAddress]
+                    })
+                })
+                const metaData = await metaRes.json()
+        
+                return {
+                    contractAddress: token.contractAddress,
+                    tokenBalance: token.tokenBalance,
+                    name: metaData.result?.name,
+                    symbol: metaData.result?.symbol,
+                    logo: metaData.result?.logo,
+                    decimals: metaData.result?.decimals
+                }
+            })
+        )
+
+        console.log("With metadata:", tokensWithMetadata)
+        return tokensWithMetadata
+    } catch (err) {
+        console.error("Failed fetching token list or metadata:", err)
+        return []
+    }
+}
   

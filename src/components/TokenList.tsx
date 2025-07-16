@@ -15,7 +15,7 @@ export function TokenList() {
                 console.log('ini Token list')
                 console.log(res)
 
-                setTokens(res?.tokenBalances || [])
+                setTokens(res)
             })
         }
     }, [address, isConnected])
@@ -32,8 +32,12 @@ export function TokenList() {
                             {tokens.map((token, index) => {
                                 const formatted = formatUnits(BigInt(token.tokenBalance || '0'), token.decimals || 18)
                                 return (
-                                    <li key={index}>
-                                        {token.contractAddress} - {token.symbol} - {token.tokenBalance}
+                                    <li key={index} className="flex items-center space-x-3">
+                                        {token.logo && (
+                                            <img src={token.logo} alt={token.symbol} className="w-6 h-6 rounded-full" />
+                                        )}
+                                        <span>{token.name || 'Unknown'} ({token.symbol || '-'})</span>
+                                        <span className="ml-auto">{Number(formatted).toFixed(4)}</span>
                                     </li>
                                 )
                             })}
